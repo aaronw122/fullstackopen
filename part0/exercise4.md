@@ -22,7 +22,6 @@ sequenceDiagram
     activate server
     server-->>browser: the css file
     deactivate server
-
     browser->>server: GET https://fullstack-exampleapp.herokuapp.com/exampleapp/main.js
     activate server
     server-->>browser: the JavaScript file
@@ -38,3 +37,4 @@ sequenceDiagram
     Note right of browser: The browser executes the callback function that renders the notes
 
 ```
+
