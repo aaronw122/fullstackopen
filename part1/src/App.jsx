@@ -1,52 +1,50 @@
-const Header = ({course}) => {
+import { useState } from 'react'
+
+const Counter = ({counter}) => {
     return(
-        <h1>{course}</h1>
+        <div>
+            {counter}
+        </div>
     )
 }
 
-const Content = ({parts}) => {
+const Button = ({text, handleClick}) => {
     return(
-        parts.map(p => (
-            <p key={p.name}> {p.name} {p.exercises} </p>
-        ))
-    )
-}
-
-const Total = ({parts}) => {
-
-    let sum = 0;
-
-    for (const part of parts){
-        sum += part.exercises;
-    }
-    return(
-        <p>Number of exercises: {sum} </p>
+        <button onClick={handleClick}>
+            {text}
+        </button>
     )
 }
 
 const App = () => {
-    const course = {
-        name: 'Half Stack application development',
-        parts: [
-            {
-                name: 'Fundamentals of React',
-                exercises: 10
-            },
-            {
-                name: 'Using props to pass data',
-                exercises: 7
-            },
-            {
-                name: 'State of a component',
-                exercises: 14
-            }
-        ]
+    const [ counter, setCounter ] = useState(0)
+    console.log('rendering with counter value', counter)
+
+    const zeroButtonVisible = (counter >= 1) || (counter < 0)
+
+    const incrementByOne = () => {
+        setCounter(counter + 1)
+        console.log('increasing, value before', counter)
+
     }
+
+    const decreaseByOne = () => setCounter(counter - 1)
+
+
+    const setToZero = () => {
+        setCounter(0)
+        console.log('decreasing, value before', counter)
+
+    }
+
     return (
         <div>
-            <Header course={course.name}/>
-            <Content parts={course.parts}/>
-            <Total parts={course.parts}/>
+            <Counter counter={counter}/>
+            <Button text='plus' handleClick={incrementByOne}/>
+            <Button text='minus' handleClick={decreaseByOne}/>
+            {zeroButtonVisible ?
+            <Button text='zero' handleClick={setToZero}/>
+                : null}
         </div>
     )
 }
