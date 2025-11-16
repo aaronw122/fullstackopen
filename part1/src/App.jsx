@@ -1,108 +1,104 @@
 import { useState } from 'react'
 
+const Button = ({text, onClick}) => {
 
-const FeedbackScore = ({positive}) => {
-    let stringPos = null;
-
-    if (positive != null) {
-        stringPos = positive.toString() + '%'
-    }
     return(
-        <td>{stringPos}</td>
+        <button onClick={onClick}> {text} </button>
     )
 }
 
-const StatisticLine = ({text, stat}) => <div>{text}: {stat} </div>;
+const Highest = ({highest, quote, votes}) => {
+        return (highest !== 0) ? (
+            <div>
+                <p>{quote}</p>
+                <p>{votes} votes</p>
+            </div>
+        ) :
+        null
 
-const Stats = ({bad, good, neutral}) => {
-
-    let total = bad + good + neutral;
-
-    let average = Number((good + (bad * (-1))) / total).toFixed(2);
-
-    let positive = Number((good / total) * 100).toFixed(1);
-
-    return (total >= 1) ? (
-        <table>
-            <colgroup>
-                <col span="2"/>
-            </colgroup>
-            <tbody>
-                <tr>
-                    <td>good</td>
-                    <td>{good}</td>
-                </tr>
-                <tr>
-                    <td>neutral</td>
-                    <td>{neutral}</td>
-                </tr>
-                <tr>
-                    <td>bad</td>
-                    <td>{bad}</td>
-                </tr>
-                <tr>
-                    <td>all</td>
-                    <td>{total}</td>
-                </tr>
-                <tr>
-                    <td>positive</td>
-                    <FeedbackScore positive={positive}/>
-                </tr>
-                <tr>
-                    <td>average</td>
-                    <td>{average}</td>
-                </tr>
-            </tbody>
-        </table>
-    ):
-    (
-        <div>
-            no feedback given
-        </div>
-    )
-}
-
-const Header = ({text}) => <h1>{text}</h1>;
-
-const Button = (props) => {
-    const { onClick, text } = props
-    return (
-        <button onClick={onClick}>
-            {text}
-        </button>
-    )
-}
+};
 
 const App = () => {
-    const [good, setGood] = useState(0)
-    const [neutral, setNeutral] = useState(0)
-    const [bad, setBad] = useState(0)
-    const [total, setTotal] = useState(0)
+    let prevAnecdotes = [
+        {
+            quote: 'If it hurts, do it more often.',
+            votes: 0
+        },
+        {
+            quote: 'Adding manpower to a late software project makes it later!',
+            votes: 0
+        },
+        {
+            quote: 'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+            votes: 0
+        },
+        {
+            quote: 'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+            votes: 0
+        },
+        {
+            quote: 'Premature optimization is the root of all evil.',
+            votes: 0
+        },
+        {
+            quote: 'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
+            votes: 0
+        },
+        {
+            quote: 'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
+            votes: 0
+        },
+        {
+            quote: 'The only way to go fast, is to go well.',
+            votes: 0
+        },
+    ]
+
+    const [selected, setSelected] = useState(0);
+
+    const [anecdotes, setAnecdotes] = useState(prevAnecdotes);
+
+    const [highest, setHighest] = useState(0);
+
+    const randomize = () => setSelected(Math.floor(Math.random() * anecdotes.length));
+
+    const vote = () => {
+            const copy = [...anecdotes];
+            copy[selected] = {
+                ...copy[selected],
+                votes: copy[selected].votes + 1,
+            };
+            setAnecdotes(copy);
+            highestVote(copy);
+    }
 
 
-    const handleGoodClick = () => {
-        setGood(good + 1)
-        setTotal(total+1)
-    }
-    const handleNeutralClick = () => {
-        setNeutral(neutral + 1)
-        setTotal(total+1)
-    }
-    const handleBadClick = () => {
-        setBad(bad+1)
-        setTotal(total+1)
-    }
+    const highestVote = (copy) => {
+        let best = 0;
+        let bestIndex = 0;
+
+        for (let i in copy){
+            if (copy[i].votes >= best) {
+                console.log(copy[i].votes)
+                bestIndex = i;
+                best = copy[i].votes
+                console.log('best index:', bestIndex);
+            }
+        }
+        setHighest(bestIndex);
+    };
 
     return (
         <div>
-            <Header text='give feedback'/>
-            <Button onClick={handleGoodClick} text='good'/>
-            <Button onClick={handleNeutralClick} text='neutral'/>
-            <Button onClick={handleBadClick} text='bad'/>
-            <Header text='statistics'/>
-            <Stats good={good} neutral={neutral} bad={bad} total={total}/>
+            <h2>anecdotes of the day</h2>
+            <p>{anecdotes[selected].quote}</p>
+            <p> {anecdotes[selected].votes} votes</p>
+            <Button text='random anecdote' onClick={randomize}/>
+            <Button text='vote' onClick={vote}/>
+            <h2>anecdote with the most votes</h2>
+            <Highest highest={highest} quote={anecdotes[highest].quote} votes={anecdotes[highest].votes}/>
         </div>
     )
-}
+};
 
 export default App
