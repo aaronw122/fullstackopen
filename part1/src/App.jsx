@@ -8,7 +8,7 @@ const FeedbackScore = ({positive}) => {
         stringPos = positive.toString() + '%'
     }
     return(
-        <div>positive feedback: {stringPos}</div>
+        <td>{stringPos}</td>
     )
 }
 
@@ -18,29 +18,42 @@ const Stats = ({bad, good, neutral}) => {
 
     let total = bad + good + neutral;
 
-    let average = (good + (bad * (-1))) / total
+    let average = Number((good + (bad * (-1))) / total).toFixed(2);
 
-    let positive = (good / total) * 100
+    let positive = Number((good / total) * 100).toFixed(1);
 
     return (total >= 1) ? (
-        <div>
-            <table>
-                <colgroup>
-                    <col span="2"/>
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-            </table>
-            <StatisticLine text='good' stat={good}/>
-            <StatisticLine text='neutral' stat={neutral}/>
-            <StatisticLine text='bad' stat={bad}/>
-            <StatisticLine text='total responses' stat={total}/>
-            <FeedbackScore positive={positive}/>
-            <StatisticLine text='average' stat={average}/>
-        </div>
+        <table>
+            <colgroup>
+                <col span="2"/>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>good</td>
+                    <td>{good}</td>
+                </tr>
+                <tr>
+                    <td>neutral</td>
+                    <td>{neutral}</td>
+                </tr>
+                <tr>
+                    <td>bad</td>
+                    <td>{bad}</td>
+                </tr>
+                <tr>
+                    <td>all</td>
+                    <td>{total}</td>
+                </tr>
+                <tr>
+                    <td>positive</td>
+                    <FeedbackScore positive={positive}/>
+                </tr>
+                <tr>
+                    <td>average</td>
+                    <td>{average}</td>
+                </tr>
+            </tbody>
+        </table>
     ):
     (
         <div>
@@ -68,17 +81,14 @@ const App = () => {
 
 
     const handleGoodClick = () => {
-        console.log('good before', good)
         setGood(good + 1)
         setTotal(total+1)
     }
     const handleNeutralClick = () => {
-        console.log('neutral before', neutral)
         setNeutral(neutral + 1)
         setTotal(total+1)
     }
     const handleBadClick = () => {
-        console.log('bad before', bad)
         setBad(bad+1)
         setTotal(total+1)
     }
