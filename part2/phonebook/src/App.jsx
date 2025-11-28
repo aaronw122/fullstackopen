@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import Contacts from "../components/contacts.jsx";
+import SearchFilter from "../components/searchFilter.jsx";
+import AddContact from "../components/addContact.jsx";
+
 
 const App = () => {
     const [persons, setPersons] = useState([
@@ -11,6 +14,7 @@ const App = () => {
     const [newName, setNewName] = useState('')
     const [newPhone, setNewPhone] = useState('')
     const [searchText, setSearchText] = useState('')
+
 
     console.log('search', searchText);
 
@@ -30,6 +34,8 @@ const App = () => {
         setSearchText(event.target.value)
     }
 
+
+
     console.log('length:', persons.length)
 
 
@@ -42,7 +48,7 @@ const App = () => {
         }
 
         const match = persons.some(f => {
-            if (f.name === newName){
+            if (f.name.toLowerCase() === newName.toLowerCase()){
                 window.alert(`${newName}, is already added to phonebook!`);
                 return true;
             }
@@ -65,9 +71,7 @@ const App = () => {
         console.log('search', searchText);
         if (searchText === ''){
             console.log('object sent', persons);
-            return(
-                persons
-            )
+            return persons
         }
         else{
             return persons.filter(person => person.name.toLowerCase().includes(searchText.toLowerCase()))
@@ -79,21 +83,9 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-            <div>
-                filter shown with:<input value={searchText} onChange={handleSearchChange}/>
-            </div>
+                <SearchFilter searchText={searchText} handleSearchChange={handleSearchChange}/>
             <h3>add new contact</h3>
-                <form onSubmit={addPerson}>
-                    <div>
-                        name: <input value={newName} onChange={handleNameChange}/>
-                    </div>
-                    <div>
-                        phone: <input value={newPhone} onChange={handlePhoneChange}/>
-                    </div>
-                    <div>
-                        <button type="submit">add</button>
-                    </div>
-                </form>
+                <AddContact addPerson={addPerson} newName={newName} newPhone={newPhone} handleNameChange={handleNameChange} handlePhoneChange={handlePhoneChange}/>
             <h3>Numbers</h3>
                 <Contacts persons={contactsToShow()}/>
         </div>
