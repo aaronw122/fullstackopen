@@ -8,7 +8,7 @@ const Button = ({text, onClick}) => {
 }
 
 const Highest = ({highest, quote, votes}) => {
-        return (highest !== 0) ? (
+    return (highest !== 0) ? (
             <div>
                 <p>{quote}</p>
                 <p>{votes} votes</p>
@@ -63,25 +63,24 @@ const App = () => {
     const randomize = () => setSelected(Math.floor(Math.random() * anecdotes.length));
 
     const vote = () => {
-            const copy = [...anecdotes];
-            copy[selected] = {
-                ...copy[selected],
-                votes: copy[selected].votes + 1,
-            };
-            setAnecdotes(copy);
-            highestVote(copy);
+        const copy = [...anecdotes];
+        copy[selected] = {
+            ...copy[selected],
+            votes: copy[selected].votes + 1,
+        };
+        setAnecdotes(copy);
     }
 
 
-    const highestVote = (copy) => {
+    const highestVote = () => {
         let best = 0;
         let bestIndex = 0;
 
-        for (let i in copy){
-            if (copy[i].votes >= best) {
-                console.log(copy[i].votes)
+        for (let i in anecdotes){
+            if (anecdotes[i].votes >= best) {
+                console.log(anecdotes[i].votes)
                 bestIndex = i;
-                best = copy[i].votes
+                best = anecdotes[i].votes
                 console.log('best index:', bestIndex);
             }
         }
@@ -92,7 +91,7 @@ const App = () => {
         <div>
             <h2>anecdotes of the day</h2>
             <p>{anecdotes[selected].quote}</p>
-            <p> {anecdotes[selected].votes} votes</p>
+            <p> has {anecdotes[selected].votes} votes</p>
             <Button text='random anecdote' onClick={randomize}/>
             <Button text='vote' onClick={vote}/>
             <h2>anecdote with the most votes</h2>

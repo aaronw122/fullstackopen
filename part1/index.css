@@ -24,3 +24,7 @@ td {
 caption {
     padding: 10px;
 }
+
+.total {
+    font-weight: bold;
+}
