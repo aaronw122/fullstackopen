@@ -1,0 +1,5 @@
+.env
+Dockerfile
+docker-compose.yml
+eslint.config.mjs
+node_modules
