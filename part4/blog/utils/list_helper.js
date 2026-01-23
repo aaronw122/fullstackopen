@@ -4,9 +4,11 @@ const dummy = (blogs) => {
 
 const totalLike = (blogs) => {
   let likeSum = 0
-  blogs.map(el => {
-    likeSum += el.likes
-  })
+  if (blogs.length > 0) {
+    blogs.map(el => {
+      likeSum += el.likes
+    })
+  }
   return likeSum
 }
 
@@ -43,7 +45,6 @@ const authorBlogs = (blogs) => {
         if (f.author === el.author) {
           f.blogs++
           console.log(`incrementing ${f.author} by 1`)
-          console.log(newObj)
         }
         console.log('arr', arr)
       })
@@ -59,7 +60,7 @@ const mostBlogs = (blogs) => {
   let index = 0
   //find author with greatest number of posts, call functioun above
   const arr = authorBlogs(blogs)
-  console.log('arr for most', arr)
+  console.log('arr for most blogs', arr)
 
 
   arr.map(el => {
@@ -99,15 +100,11 @@ const authorLikes = (blogs) => {
 }
 
 const mostLikes = (blogs) => {
-  console.log('author likes begin---------')
-
   let topLikes = 0
   let topIndex = 0
   let index = 0
   //find author with greatest number of posts, call functioun above
   const arr = authorLikes(blogs)
-  console.log('arr for most', arr)
-
 
   arr.map(el => {
     if (el.likes > topLikes) {

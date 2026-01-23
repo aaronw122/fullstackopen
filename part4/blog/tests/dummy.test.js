@@ -1,115 +1,17 @@
-const { test, describe } = require('node:test')
+const { test, describe, after, beforeEach } = require('node:test')
+const mongoose = require('mongoose')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
+const supertest = require('supertest')
+const app = require('../app')
+const Blog = require('../models/blog')
+const helper = require('../utils/test_helper')
+const api = supertest(app)
 
-
-const listWithZero = []
-
-const oneBlog = [
-  {
-    title: 'ur mom gay',
-    author: 'john kane',
-    url: 'google.com/bbc',
-    likes: 4
-  }
-]
-const multipleBlog = [
-  {
-    title: 'ur mom gay',
-    author: 'john kane',
-    url: 'google.com/bbc',
-    likes: 2
-  }
-  ,
-  {
-    title: 'i love joanna',
-    author: 'brycen cousins',
-    url: 'google.com/jjj',
-    likes: 1
-  },
-  {
-    title: 'asdasf',
-    author: 'hank swagner',
-    url: 'tatum',
-    likes: 0
-  }
-]
-const sameNum = [
-  {
-    title: 'ur mom gay',
-    author: 'john kane',
-    url: 'google.com/bbc',
-    likes: 3
-  }
-  ,
-  {
-    title: 'i love joanna',
-    author: 'brycen cousins',
-    url: 'google.com/jjj',
-    likes: 1
-  },
-  {
-    title: 'asdasf',
-    author: 'hank swagner',
-    url: 'tatum',
-    likes: 3
-  },
-  {
-    title: 'duuuude',
-    author: 'michael stevens',
-    url: 'rose',
-    likes: 0
-  }
-]
-
-const oneAuthor = [
-  {
-    title: 'ur mom gay',
-    author: 'john kane',
-    url: 'google.com/bbc',
-    likes: 3
-  }
-]
-
-const multipleAuthors = [
-  {
-    title: 'ur mom gay',
-    author: 'john kane',
-    url: 'google.com/bbc',
-    likes: 3
-  },
-  {
-    title: 'i love joanna',
-    author: 'john kane',
-    url: 'google.com/jjj',
-    likes: 1
-  },
-  {
-    title: 'this',
-    author: 'hank swagner',
-    url: 'tatum',
-    likes: 2
-  },
-  {
-    title: 'duuuude',
-    author: 'michael stevens',
-    url: 'rose',
-    likes: 0
-  },
-  {
-    title: 'asdasf',
-    author: 'hank swagner',
-    url: 'tatum',
-    likes: 1
-  },
-  {
-    title: 'yes',
-    author: 'hank swagner',
-    url: 'tatum',
-    likes: 0
-  },
-]
-
+beforeEach(async () => {
+  await Blog.deleteMany({})
+  await Blog.insertMany(helper.multipleBlog)
+})
 
 test('dummy returns one', () => {
   const blogs = []
@@ -123,16 +25,16 @@ describe('total likes', () => {
 
   test('likes is zero', () => {
 
-    const result = listHelper.totalLike(listWithZero)
+    const result = listHelper.totalLike(helper.listWithZero)
     assert.strictEqual(result, 0)
   })
   test('oneBlog list calculated right', () => {
-    const result = listHelper.totalLike(oneBlog)
+    const result = listHelper.totalLike(helper.oneBlog)
 
     assert.strictEqual(result, 4)
   })
   test('multipleBlog list calculated right', () => {
-    const result = listHelper.totalLike(multipleBlog)
+    const result = listHelper.totalLike(helper.multipleBlog)
 
     assert.strictEqual(result, 3)
   })
@@ -140,44 +42,82 @@ describe('total likes', () => {
 
 describe('favBlog', () => {
   test('works with one blog', () => {
-    const result = listHelper.favoriteBlog(oneBlog)
-    assert.deepStrictEqual(result, oneBlog[0])
+    const result = listHelper.favoriteBlog(helper.oneBlog)
+    assert.deepStrictEqual(result, helper.oneBlog[0])
   })
 
   test('works with multiple', () => {
-    const result = listHelper.favoriteBlog(multipleBlog)
+    const result = listHelper.favoriteBlog(helper.multipleBlog)
 
     console.log('result of multiple', result)
 
-    assert.deepStrictEqual(result, multipleBlog[0])
+    assert.deepStrictEqual(result, helper.multipleBlog[0])
   })
 
   test('works with same #', () => {
-    const result = listHelper.favoriteBlog(sameNum)
+    const result = listHelper.favoriteBlog(helper.sameNum)
 
     console.log('result of sameNum', result)
 
-    assert.deepStrictEqual(result, sameNum[0])
+    assert.deepStrictEqual(result, helper.sameNum[0])
   })
 
   describe('mostBlogs', () => {
     test('works with one', () => {
-      const result = listHelper.mostBlogs(oneAuthor)
+      const result = listHelper.mostBlogs(helper.oneAuthor)
       assert.deepStrictEqual(result, {author: 'john kane', blogs: 1})
     })
     test('works with multiple', () => {
-      const result = listHelper.mostBlogs(multipleAuthors)
+      const result = listHelper.mostBlogs(helper.multipleAuthors)
       assert.deepStrictEqual(result, {author: 'hank swagner', blogs: 3})
     })
   })
   describe('mostLikes', () => {
     test('works with one', () => {
-      const result = listHelper.mostLikes(oneAuthor)
+      const result = listHelper.mostLikes(helper.oneAuthor)
       assert.deepStrictEqual(result, {author: 'john kane', likes: 3})
     })
     test('works with multiple', () => {
-      const result = listHelper.mostLikes(multipleAuthors)
+      const result = listHelper.mostLikes(helper.multipleAuthors)
       assert.deepStrictEqual(result, {author: 'john kane', likes: 4})
     })
   })
+})
+describe('mostLikes', () => {
+  test('works with one', () => {
+    const result = listHelper.mostLikes(helper.oneAuthor)
+    assert.deepStrictEqual(result, {author: 'john kane', likes: 3})
+  })
+  test('works with multiple', () => {
+    const result = listHelper.mostLikes(helper.multipleAuthors)
+    assert.deepStrictEqual(result, {author: 'john kane', likes: 4})
+  })
+})
+describe('get request works', () => {
+  test('json format', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+  test('correct number of blogs', async () => {
+    const response = await api.get('/api/blogs')
+    assert.deepStrictEqual(response.body.length, helper.multipleBlog.length)
+  })
+})
+describe('id transformer works', () => {
+  test('id works', async () => {
+    const response = await api.get('/api/blogs')
+    const blog = response.body[0]
+    assert.ok(blog.id)
+  })
+  test('_id does not exist', async () => {
+    const response = await api.get('/api/blogs')
+    const blog = response.body[0]
+    assert.strictEqual(blog._id, undefined)
+  })
+})
+
+after(async () => {
+  await mongoose.connection.close()
 })
