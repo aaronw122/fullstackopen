@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "json-server -p 3001 db.json"
+    "server": "json-server -p 3001 db.json",
+    "build:ui": "rm -rf dist && npm run build && cp -r dist ../../part3/phonebook_BE"
   },
   "dependencies": {
     "axios": "^1.13.2",

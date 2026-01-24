@@ -105,19 +105,40 @@ describe('get request works', () => {
     assert.deepStrictEqual(response.body.length, helper.multipleBlog.length)
   })
 })
-describe('id transformer works', () => {
+describe('id transformer works', async() => {
+  const response = await api.get('/api/blogs')
+  const blog = response.body[0]
   test('id works', async () => {
-    const response = await api.get('/api/blogs')
-    const blog = response.body[0]
     assert.ok(blog.id)
   })
   test('_id does not exist', async () => {
-    const response = await api.get('/api/blogs')
-    const blog = response.body[0]
     assert.strictEqual(blog._id, undefined)
   })
 })
+describe('post request works', async () => {
+  const newObj = {
+    title: 'how to properly learn',
+    author: 'aaron williams',
+    url: 'mapthingsout.com',
+    likes: 10
+  }
+  await api
+    .post('/api/blogs')
+    .send(newObj)
+    .expect(201)
 
+  const blogsAtEnd = await helper.blogsInDb()
+
+  test('length increments by 1', () => {
+     assert.strictEqual(blogsAtEnd.length, helper.multipleBlog.length+1)
+  })
+  test('newObj has the correct props', () => {
+    const newBlog = blogsAtEnd[blogsAtEnd.length - 1]
+    const { id, ...rest } = newBlog
+    console.log('rest', rest)
+    assert.deepStrictEqual(newObj, rest)
+  })
+})
 after(async () => {
   await mongoose.connection.close()
 })

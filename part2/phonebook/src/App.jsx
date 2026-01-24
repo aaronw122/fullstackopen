@@ -44,12 +44,12 @@ const App = () => {
     }
 
 
-
     console.log('length:', persons.length)
 
 
     const addPerson = (event) => {
-        event.preventDefault()
+        console.log('inside')
+        event.preventDefault() // stops default page reload for form submit
         const personObject = {
             name: newName,
             number: newPhone,
@@ -57,8 +57,9 @@ const App = () => {
 
         const match = persons.some(f => {
             if (f.name.toLowerCase() === newName.toLowerCase()){
-                window.confirm(`${newName}, is already added to phonebook, replace the old number with a new one?`);
-                updatePerson(persons.find(person => person.name === newName ? person.id : null).id)
+                if(window.confirm(`${newName}, is already added to phonebook, replace the old number with a new one?`)){
+                    updatePerson(persons.find(person => person.name === newName ? person.id : null).id)
+                }
                 return true;
             }
             if (f.number === newPhone){
@@ -80,11 +81,17 @@ const App = () => {
                     setNewName('')
                     setNewPhone('')
                 })
+                .catch(error => {
+                    setErrorMessage(error.response.data.error)
+                    setTimeout(() => {
+                        setErrorMessage(null)
+                    }, 5000)
+                })
         }
     }
 
     const removePerson = (id) => {
-        const person = persons.find(p => p.id ===id)
+        const person = persons.find(p => p.id === id)
         if (window.confirm(`delete ${person.name}?`)){
             contactService
                 .remove(id)
@@ -110,7 +117,10 @@ const App = () => {
                 setTimeout(() => {
                     setAddMessage(null)
                 }, 5000)
+                setNewName('')
+                setNewPhone('')
             })
+            .catch(error => setErrorMessage(error.response.data.error))
     }
 
 
